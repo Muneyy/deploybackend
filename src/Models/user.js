@@ -20,67 +20,39 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const itemSchema = new mongoose_1.Schema({
-    name: {
+const userSchema = new mongoose_1.Schema({
+    username: {
         type: String,
         required: true,
     },
-    description: {
+    handle: {
         type: String,
         required: true,
     },
-    tags: [{
-            type: String,
-            enums: [
-                "apparel",
-                "photocard",
-                "lightstick",
-                "album",
-                "poster",
-                "film",
-                "cd",
-                "ticket",
-                "card",
-                "peripheral",
-                "stationery",
-            ],
-        }],
-    price: {
-        type: Number,
+    password: {
+        type: String,
+        rqeuired: true,
+    },
+    bio: {
+        type: String,
         required: true,
     },
-    images_urls: [{
-            type: String,
-        }],
-    group: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Group',
+    email: {
+        type: String,
         required: true,
     },
-    user: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true,
-    },
-    likeCounter: {
-        type: Number,
-    },
-    likeUsers: [{
+    friends: [{
             type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Like',
+            ref: 'Friend',
         }],
-    commentCounter: {
-        type: Number,
+    avatarURL: {
+        type: String,
     },
-    commentUsers: [{
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Comment',
-        }],
 }, { timestamps: true });
-itemSchema
+userSchema
     .virtual('url')
     .get(function () {
-    return `/items/${this._id}`;
+    return `/users/${this._id}`;
 });
-const Item = mongoose_1.default.model('Item', itemSchema);
-exports.default = Item;
+const User = mongoose_1.default.model('User', userSchema);
+exports.default = User;

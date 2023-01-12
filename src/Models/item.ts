@@ -43,6 +43,20 @@ const itemSchema = new Schema(
             ref: 'User',
             required: true,
         },
+        likeCounter: {
+            type: Number,
+        },
+        likeUsers: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Like',
+        }],
+        commentCounter: {
+            type: Number,
+        },
+        commentUsers: [{
+            type: Schema.Types.ObjectId,
+            ref: 'Comment',
+        }],
     },
     { timestamps: true },
 );

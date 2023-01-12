@@ -7,6 +7,10 @@ const collection_controller = require('../Controllers/collectionController');
 const item_controller = require('../Controllers/itemController');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const user_controller = require('../Controllers/userController');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const like_controller = require('../Controllers/likeController');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const comment_controller = require('../Controllers/commentController');
 
 router.get('/collections/', collection_controller.collections);
 
@@ -19,6 +23,11 @@ router.get('/users/', user_controller.users);
 router.get('/users/handles', user_controller.users_handles);
 
 router.get('/users/:userId', user_controller.user);
+
+// Get user's created collections
+router.get('/:userId/collections', collection_controller.user_collections);
+
+router.get('/items/:itemId/likes', like_controller.item_likes);
 
 router.post('/users/post', user_controller.post_user);
 

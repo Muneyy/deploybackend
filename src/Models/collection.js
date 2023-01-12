@@ -20,67 +20,39 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const itemSchema = new mongoose_1.Schema({
+const groupSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
     },
-    description: {
+    summary: {
         type: String,
         required: true,
     },
     tags: [{
             type: String,
             enums: [
-                "apparel",
-                "photocard",
-                "lightstick",
-                "album",
-                "poster",
-                "film",
-                "cd",
-                "ticket",
-                "card",
-                "peripheral",
-                "stationery",
+                "k-pop",
+                "j-pop",
+                "p-pop",
+                "soloist",
+                "boy-group",
+                "girl-group",
             ],
         }],
-    price: {
-        type: Number,
-        required: true,
-    },
-    images_urls: [{
-            type: String,
-        }],
-    group: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Group',
-        required: true,
+    image_url: {
+        type: String,
     },
     user: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },
-    likeCounter: {
-        type: Number,
-    },
-    likeUsers: [{
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Like',
-        }],
-    commentCounter: {
-        type: Number,
-    },
-    commentUsers: [{
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Comment',
-        }],
 }, { timestamps: true });
-itemSchema
+groupSchema
     .virtual('url')
     .get(function () {
-    return `/items/${this._id}`;
+    return `/collections/${this._id}`;
 });
-const Item = mongoose_1.default.model('Item', itemSchema);
-exports.default = Item;
+const Group = mongoose_1.default.model('Group', groupSchema);
+exports.default = Group;

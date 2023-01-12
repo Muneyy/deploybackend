@@ -20,67 +20,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
-const itemSchema = new mongoose_1.Schema({
-    name: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    tags: [{
-            type: String,
-            enums: [
-                "apparel",
-                "photocard",
-                "lightstick",
-                "album",
-                "poster",
-                "film",
-                "cd",
-                "ticket",
-                "card",
-                "peripheral",
-                "stationery",
-            ],
-        }],
-    price: {
-        type: Number,
-        required: true,
-    },
-    images_urls: [{
-            type: String,
-        }],
-    group: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: 'Group',
-        required: true,
-    },
-    user: {
+const friendSchema = new mongoose_1.Schema({
+    requester: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },
-    likeCounter: {
-        type: Number,
+    recipient: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
     },
-    likeUsers: [{
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Like',
-        }],
-    commentCounter: {
+    status: {
         type: Number,
+        enums: [
+            0,
+            1,
+            2,
+            3, // friends
+        ],
     },
-    commentUsers: [{
-            type: mongoose_1.Schema.Types.ObjectId,
-            ref: 'Comment',
-        }],
 }, { timestamps: true });
-itemSchema
-    .virtual('url')
-    .get(function () {
-    return `/items/${this._id}`;
-});
-const Item = mongoose_1.default.model('Item', itemSchema);
-exports.default = Item;
+const Friend = mongoose_1.default.model('Friend', friendSchema);
+exports.default = Friend;

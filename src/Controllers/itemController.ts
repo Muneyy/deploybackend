@@ -3,6 +3,8 @@ import Item from '../Models/item';
 import async = require('async');
 import { Request, Response } from "express";
 import User from '../Models/user';
+import Like from '../Models/like';
+import Comment from '../Models/comment';
 import { body, validationResult } from 'express-validator';
 
 const router = express.Router();
@@ -14,6 +16,24 @@ exports.items = (req: Request, res: Response, next: any) => {
             path: 'user',
             model: User,
             select: ['username', 'handle', 'avatarURL'],
+        })
+        .populate({
+            path: 'likeUsers',
+            model: Like,
+            populate: {
+                path: 'user',
+                model: User,
+                select: ['username', 'avatarURL', 'handle'],
+            },
+        })
+        .populate({
+            path: 'commentUsers',
+            model: Comment,
+            populate: {
+                path: 'user',
+                model: User,
+                select: ['username', 'avatarURL', 'handle'],
+            },
         })
         .sort([['createdAt', 'descending']])
         .exec((err, list_item) => {
