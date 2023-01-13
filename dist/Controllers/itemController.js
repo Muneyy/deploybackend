@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express = require("express");
 const item_1 = __importDefault(require("../Models/item"));
-const async = require("async");
 const user_1 = __importDefault(require("../Models/user"));
 const like_1 = __importDefault(require("../Models/like"));
 const comment_1 = __importDefault(require("../Models/comment"));
@@ -45,23 +44,45 @@ exports.items = (req, res, next) => {
         res.send(list_item);
     });
 };
-exports.item = (req, res, next) => {
-    async.parallel({
-        item(callback) {
-            item_1.default.findById(req.params.itemId)
-                .exec(callback);
+exports.get_item = (req, res, next) => {
+    console.log('please work');
+    console.log(req.params.itemId);
+    item_1.default.findById(req.params.itemId)
+        .populate('group')
+        .populate({
+        path: 'user',
+        model: user_1.default,
+        select: ['username', 'handle', 'avatarURL'],
+    })
+        .populate({
+        path: 'likeUsers',
+        model: like_1.default,
+        populate: {
+            path: 'user',
+            model: user_1.default,
+            select: ['username', 'avatarURL', 'handle'],
         },
-    }, (err, results) => {
+    })
+        .populate({
+        path: 'commentUsers',
+        model: comment_1.default,
+        populate: {
+            path: 'user',
+            model: user_1.default,
+            select: ['username', 'avatarURL', 'handle'],
+        },
+    })
+        .exec((err, result) => {
         if (err) {
             return next(err);
         }
-        if (results.item == null) {
+        if (result == null) {
             const err = new Error('Item not found');
             err.status = 404;
             return next(err);
         }
         res.send({
-            item: results.item,
+            item: result,
         });
     });
 };

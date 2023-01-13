@@ -239,10 +239,10 @@ app.get("/log-out", (req, res, next) => {
 });
 // Setup Routes
 app.use("/", unprotectedRoutes);
-// Why does this protect other routes below it????
 app.use("/", passport.authenticate('jwt', { session: false }), protectedRoutes);
 
 
+// Why does this protect other routes below it????
 app.listen(process.env.PORT, () => {
     console.log(`Node App listening on port ${process.env.PORT}`);
 });

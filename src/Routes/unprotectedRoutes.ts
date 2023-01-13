@@ -18,6 +18,8 @@ router.get('/collections/:groupId', collection_controller.collection);
 
 router.get('/collections/:groupId/items', item_controller.items);
 
+router.get('/items/:itemId', item_controller.get_item);
+
 router.get('/users/', user_controller.users);
 
 router.get('/users/handles', user_controller.users_handles);
