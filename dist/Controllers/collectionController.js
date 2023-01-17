@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -162,39 +171,53 @@ exports.update_collection = [
         .isLength({ min: 1 })
         .isMongoId()
         .escape(),
-    (req, res, next) => {
+    (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         const errors = (0, express_validator_1.validationResult)(req);
         console.log(req.body);
         if (!errors.isEmpty()) {
             res.send(errors.array());
         }
         else {
-            const updatedCollection = collection_1.default.findByIdAndUpdate(req.params.collectionId, { $set: {
-                    name: req.body.name,
-                    summary: req.body.summary,
-                    tags: req.body.tags,
-                } }, { upsert: false }).exec((err, updatedCollection) => {
-                if (err) {
+            console.log("YOYOYO");
+            console.log(req.body.requesterId);
+            yield collection_1.default.findByIdAndUpdate(req.params.collectionId)
+                .exec((err, found_collection) => {
+                console.log(found_collection === null || found_collection === void 0 ? void 0 : found_collection.user.toString());
+                console.log("heyhehey");
+                if (err)
                     return next(err);
-                }
-                if (!updatedCollection) {
-                    return res.status(404).json({
-                        message: "Collection does not exist",
-                    });
+                if (found_collection && found_collection.user.toString() !== req.body.requesterId) {
+                    return res.status(401).send("Unauthorized User.");
                 }
                 else {
-                    if (req.body.requesterId === updatedCollection.user.toString()) {
-                        return res.send(updatedCollection);
-                    }
-                    else {
-                        console.log(req.body.requesterId);
-                        console.log(updatedCollection.user.toString());
-                        return res.status(401).json({
-                            message: "Unauthorized User",
-                        });
-                    }
+                    collection_1.default.findByIdAndUpdate(req.params.collectionId, { $set: {
+                            name: req.body.name,
+                            summary: req.body.summary,
+                            tags: req.body.tags,
+                        } }, { upsert: false }).exec((err, updatedCollection) => {
+                        if (err) {
+                            return next(err);
+                        }
+                        if (!updatedCollection) {
+                            return res.status(404).json({
+                                message: "Collection does not exist",
+                            });
+                        }
+                        else {
+                            if (req.body.requesterId === updatedCollection.user.toString()) {
+                                return res.send(updatedCollection);
+                            }
+                            else {
+                                console.log(req.body.requesterId);
+                                console.log(updatedCollection.user.toString());
+                                return res.status(401).json({
+                                    message: "Unauthorized User",
+                                });
+                            }
+                        }
+                    });
                 }
             });
         }
-    },
+    }),
 ];
