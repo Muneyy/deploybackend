@@ -137,3 +137,64 @@ exports.post_collection = [
         }
     },
 ];
+exports.update_collection = [
+    (0, express_validator_1.body)('name', 'Name must be specified.')
+        .trim()
+        .isLength({ min: 1, max: 20 })
+        .escape(),
+    (0, express_validator_1.body)('summary', 'Summary must be specified.')
+        .trim()
+        .isLength({ min: 1, max: 200 })
+        .escape(),
+    (0, express_validator_1.body)('tags', 'Tags must not be empty and valid.')
+        .isArray()
+        .notEmpty()
+        // This validation returns a CastError: Cast to ObjectId failed for 
+        // value "undefined" (type string) at path "_id" for model "Group"
+        .isIn(availableTags),
+    (0, express_validator_1.body)('image_url', 'Invalid URL for image.')
+        .optional({ checkFalsy: true })
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+    (0, express_validator_1.body)('requesterId', 'User must be specified.')
+        .trim()
+        .isLength({ min: 1 })
+        .isMongoId()
+        .escape(),
+    (req, res, next) => {
+        const errors = (0, express_validator_1.validationResult)(req);
+        console.log(req.body);
+        if (!errors.isEmpty()) {
+            res.send(errors.array());
+        }
+        else {
+            const updatedCollection = collection_1.default.findByIdAndUpdate(req.params.collectionId, { $set: {
+                    name: req.body.name,
+                    summary: req.body.summary,
+                    tags: req.body.tags,
+                } }, { upsert: false }).exec((err, updatedCollection) => {
+                if (err) {
+                    return next(err);
+                }
+                if (!updatedCollection) {
+                    return res.status(404).json({
+                        message: "Collection does not exist",
+                    });
+                }
+                else {
+                    if (req.body.requesterId === updatedCollection.user.toString()) {
+                        return res.send(updatedCollection);
+                    }
+                    else {
+                        console.log(req.body.requesterId);
+                        console.log(updatedCollection.user.toString());
+                        return res.status(401).json({
+                            message: "Unauthorized User",
+                        });
+                    }
+                }
+            });
+        }
+    },
+];
