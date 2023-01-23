@@ -57,6 +57,10 @@ const itemSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'Comment',
         }],
+        isDeleted: {
+            type: Boolean,
+            defualt: false,
+        },
     },
     { timestamps: true },
 );
@@ -66,6 +70,13 @@ itemSchema
     .get(function() {
         return `/items/${this._id}`;
     });
+
+itemSchema.pre('save', function (next) {
+    if (!this.isDeleted) {
+        this.isDeleted = false;
+    }
+    next();
+});
 
 const Item = mongoose.model('Item', itemSchema);
 

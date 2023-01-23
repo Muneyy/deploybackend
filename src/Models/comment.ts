@@ -16,9 +16,20 @@ const commentSchema = new Schema(
             type: String,
             required: true,
         },
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true },
 );
+
+commentSchema.pre('save', function (next) {
+    if (!this.isDeleted) {
+        this.isDeleted = false;
+    }
+    next();
+});
 
 const Comment = mongoose.model('Comment', commentSchema);
 

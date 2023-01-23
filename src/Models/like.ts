@@ -12,6 +12,10 @@ const likeSchema = new Schema(
             ref: 'Item',
             required: true,
         },
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
     },
     { timestamps: true },
 );
@@ -21,6 +25,13 @@ likeSchema
     .get(function() {
         return `/likes/${this._id}`;
     });
+
+likeSchema.pre('save', function (next) {
+    if (!this.isDeleted) {
+        this.isDeleted = false;
+    }
+    next();
+});
 
 const Like = mongoose.model('Like', likeSchema);
 
