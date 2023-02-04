@@ -106,7 +106,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // Allow CORS on specific URLs
 app.use(cors());
 app.use((req, res, next) => {
-    const allowedOrigins = [`http://localhost:${process.env.CLIENT_PORT}`, 'https://popit-trading.vercel.app', 'https://popit-trading.netlify.app'];
+    const allowedOrigins = ['https://popit-trading.vercel.app', 'https://popit-trading.netlify.app'];
     const origin = req.headers.origin;
     if (origin && allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
